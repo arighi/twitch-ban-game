@@ -1,0 +1,72 @@
+# THE BAN GAME
+
+The Ban Game is a text-based game that can be played in the Twitch chat.
+
+Users in chat can compete each other casting the spell "BAN" to ban other
+players from the game and dominate the chat!
+
+## Installation
+
+This program requires:
+ - python3
+ - pipenv
+
+And the following python modules:
+ - requests
+ - twitchio
+
+Example (tested on Ubuntu 21.04):
+
+  $ sudo apt install python3 pipenv
+  $ pipenv run pip3 install twitchio
+  $ pipenv run pip3 install requests
+
+## Running the game
+
+The game engine is implemented by a bot, to start the game you simply use the
+script run.sh in Linux:
+
+  $ ./run.sh
+  Loading .env environment variables…
+  arighi_violin is online!
+
+## Rules
+
+ - any PLAYER in chat can run:
+   !ban <TARGET_PLAYER>
+
+   <PLAYER> deals <N> "BAN" damage to <TARGET_PLAYER>, where <N> is randomly
+   modeled as a D20 roll:
+
+   - a roll of 1 is always a MISS
+
+   - a roll of 20 is a critical hit and it does x2 damage (=40 damage)
+
+   - <PLAYER> gets (1 + 10-25% of the damage back (to prevent spamming !ban)
+
+ - each <PLAYER> starts with an initial health pool of 50 HP
+
+   - when PLAYER runs the !ban command we initialize the health pool for
+     <PLAYER> and <TARGET_PLAYER>
+
+ - a PLAYER can run a command !life to show in chat the amount of HP left
+
+ - when a PLAYER reaches 0 HP, the PLAYER is banned and cannot run the !ban
+   command until PLAYER is resurrected
+
+ - !unban <TARGET_PLAYER> heals <TARGET_PLAYER> to full health
+   (this command can be only ran by broadcaster or mods)
+
+## TODO
+
+ - higher health pool for privileged users (mods, VIPs, etc.)
+
+ - implement an additional cooldown for the !ban command in addition to the
+   damage backfire to prevent spamming ban even more
+
+ - you can get health back over time or if you chat (like +1 HP every 30 min
+   being active in chat or similar)
+
+## CREDITS
+
+Thanks to Ysgramor3 for the cool text lines and the awesome suggestions!
