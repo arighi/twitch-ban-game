@@ -18,10 +18,11 @@ And the following python modules:
  - twitchio
 
 Example (tested on Ubuntu 21.04):
-
+```
   $ sudo apt install python3 pipenv
   $ pipenv run pip3 install twitchio
   $ pipenv run pip3 install requests
+```
 
 ## Running the game
 
