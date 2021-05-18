@@ -68,7 +68,7 @@ Once the game is started users in chat can start to play (see the Rules below).
 
    - a roll of 20 is a critical hit and it does x2 damage (=40 damage)
 
-   - <PLAYER> gets (1 + 10-25% of the damage back (to prevent spamming !ban)
+   - <PLAYER> gets (1 + 10-25%) of the damage back (to prevent spamming !ban)
 
  - each <PLAYER> starts with an initial health pool of 50 HP
 
@@ -81,7 +81,7 @@ Once the game is started users in chat can start to play (see the Rules below).
    command until PLAYER is resurrected
 
  - !unban <TARGET_PLAYER> heals <TARGET_PLAYER> to full health
-   (this command can be only ran by broadcaster or mods)
+   (this command can be executed only by broadcaster or mods)
 
  - PLAYER can get health back using IMG_REVIVE emotes in chat (max +1 HP for
    each message that contains the IMG_REVIVE emote)
