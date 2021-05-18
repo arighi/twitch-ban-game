@@ -57,15 +57,25 @@ script run.sh in Linux:
  - !unban <TARGET_PLAYER> heals <TARGET_PLAYER> to full health
    (this command can be only ran by broadcaster or mods)
 
+ - PLAYER can get health back using IMG_REVIVE emotes in chat (max +1 HP for
+   each message that contains the IMG_REVIVE emote)
+
 ## TODO
 
- - higher health pool for privileged users (mods, VIPs, etc.)
+ - GFPSolutions: if you spam too many !ban => you enter in a vulnerable state
+   and you can get a critical hit with a roll of 10+
+
+ - Ysgramor3:
+     Every time a user casts !ban, they take 2^n + random(0,4) damage.
+     n is the current count of bans the user executed.
+     n is initialized to 0
+     n is incremented every time a user types !ban (unless he is "banned")
+     n is decremented by one every 15 minutes.
 
  - implement an additional cooldown for the !ban command in addition to the
    damage backfire to prevent spamming ban even more
 
- - you can get health back over time or if you chat (like +1 HP every 30 min
-   being active in chat or similar)
+ - higher health pool for privileged users (mods, VIPs, etc.)
 
 ## CREDITS
 
