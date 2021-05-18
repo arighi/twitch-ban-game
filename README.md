@@ -5,6 +5,8 @@ Twitch Ban Game is a text-based game that can be played in the Twitch chat.
 Users in chat can compete each other casting the spell "BAN" to ban other
 players from the game and dominate the chat!
 
+![Screenshot](screenshot.png)
+
 ## Requirements
 
 This program requires:
