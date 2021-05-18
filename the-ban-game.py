@@ -22,7 +22,7 @@ IMG_MISS = 'HypeMiss'
 IMG_RIP = 'HypeRIP'
 IMG_HEALTH = 'HypeHeart'
 IMG_SPELL = 'HypeMage'
-IMG_REVIVE = 'HypeBard'
+IMG_REVIVE = 'arighiPastaDance'
 IMG_EVIL = 'HypeRogue'
 IMG_FAIL = 'HypeWho'
 IMG_NONE = 'HypeLol'
@@ -39,8 +39,14 @@ async def event_ready():
     print(f"{os.environ['BOT_NICK']} is online!")
 
 @bot.event
-async def event_message(ctx):
-    await bot.handle_commands(ctx)
+async def event_message(msg):
+    if IMG_REVIVE in msg.content:
+        # Heal player if the message contains the IMG_REVIVE emote
+        player = msg.author.name
+        init_player(player)
+        if msg.author.is_subscriber:
+            players[player] = min(players[player] + 1, INITIAL_HP)
+    await bot.handle_commands(msg)
 
 def init_player(player):
     if player not in players:
