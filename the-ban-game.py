@@ -56,6 +56,8 @@ def parse_args(ctx, command):
     return ctx.message.content.lower().removeprefix(command).strip().strip('@').split(' ')[0]
 
 def is_valid_user(name):
+    if name == '':
+        return False
     r = get(f'http://tmi.twitch.tv/group/user/{STREAMER_NAME}/chatters')
     users = json.loads(r.text)['chatters']
     return name in itertools.chain.from_iterable([users[i] for i in users])
@@ -63,11 +65,22 @@ def is_valid_user(name):
 @bot.command(name='life')
 async def life(ctx):
     player = ctx.author.name
+    target = parse_args(ctx, '!life')
+
+    if target != '' and not is_valid_user(target):
+        await ctx.send(f"@{player} is trying to inspect someone that has long left the area {IMG_NONE}")
+        return
+
     init_player(player)
-    if players[player] == 0:
-        await ctx.send(f"@{player} is banned {IMG_RIP}")
+    if is_valid_user(target):
+        init_player(target)
     else:
-        await ctx.send(f"@{player} has {players[player]} {IMG_HEALTH} left")
+        target = player
+
+    if players[target] == 0:
+        await ctx.send(f"@{target} is banned {IMG_RIP}")
+    else:
+        await ctx.send(f"@{target} has {players[target]} {IMG_HEALTH} left")
 
 @bot.command(name='unban')
 async def unban(ctx):

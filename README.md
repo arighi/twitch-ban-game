@@ -58,10 +58,11 @@ Once the game is started users in chat can start to play (see the Rules below).
 ## Rules
 
 ```
- - any PLAYER in chat can run:
+ - any <PLAYER> in chat can run:
+
    !ban <TARGET_PLAYER>
 
-   <PLAYER> deals <N> "BAN" damage to <TARGET_PLAYER>, where <N> is randomly
+   <PLAYER> deals <N> "ban" damage to <TARGET_PLAYER>, where <N> is randomly
    modeled as a D20 roll:
 
    - a roll of 1 is always a MISS
@@ -72,19 +73,20 @@ Once the game is started users in chat can start to play (see the Rules below).
 
  - each <PLAYER> starts with an initial health pool of 50 HP
 
-   - when PLAYER runs the !ban command we initialize the health pool for
+   - when <PLAYER> runs the !ban command we initialize the health pool for
      <PLAYER> and <TARGET_PLAYER>
 
- - a PLAYER can run a command !life to show in chat the amount of HP left
+ - <PLAYER> can run a command !life to show in chat the amount of HP left !life
+   <TARGET_PLAYER> can be used to show the amount of HP left of <TARGET_PLAYER>
 
- - when a PLAYER reaches 0 HP, the PLAYER is banned and cannot run the !ban
-   command until PLAYER is resurrected
+ - when <PLAYER> reaches 0 HP, <PLAYER> is banned and cannot run the !ban
+   command until <PLAYER> is resurrected (see !unban)
 
  - !unban <TARGET_PLAYER> heals <TARGET_PLAYER> to full health
    (this command can be executed only by broadcaster or mods)
 
- - PLAYER can get health back using IMG_REVIVE emotes in chat (max +1 HP for
-   each message that contains the IMG_REVIVE emote)
+ - <PLAYER> can get health back using <IMG_REVIVE> emotes in the chat (max +1
+   HP for each message that contains the <IMG_REVIVE> emote)
 ```
 
 ## TODO
