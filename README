@@ -5,7 +5,7 @@ The Ban Game is a text-based game that can be played in the Twitch chat.
 Users in chat can compete each other casting the spell "BAN" to ban other
 players from the game and dominate the chat!
 
-## Installation
+## Requirements
 
 This program requires:
  - python3
@@ -23,12 +23,33 @@ Example (tested on Ubuntu 21.04):
 
 ## Running the game
 
-The game engine is implemented by a bot, to start the game you simply use the
-script run.sh in Linux:
+The game engine is implemented by a bot that joins your Twitch chat. Before
+starting the game you need to configure the credentials to allow the bot to log
+into your chat. To do so create a file .env in this directory, the file should
+look like this:
+
+ TMI_TOKEN=oauth:<YOUR_OAUTH_TOKEN>
+ CLIENT_ID=arighibot
+ BOT_NICK=arighi_violin
+ BOT_PREFIX=!
+ CHANNEL=#arighi_violin
+
+Where <YOUR_OAUTH_TOKEN> is a Twitch authentication token, see
+https://dev.twitch.tv/docs/authentication for more information on how to get
+one.
+
+Also make sure to replace all variables with your Twitch username and rename
+the bot (CLIENT_ID) as you prefer.
+
+After the .env is created you can start the game using the run.sh script (in
+Linux - there should be an equivalent way to start the game from Windows / Mac
+as well):
 
   $ ./run.sh
   Loading .env environment variables…
   arighi_violin is online!
+
+Once the game is started users in chat can start to play (see the Rules below).
 
 ## Rules
 
@@ -79,4 +100,11 @@ script run.sh in Linux:
 
 ## CREDITS
 
-Thanks to Ysgramor3 for the cool text lines and the awesome suggestions!
+Thanks to Ysgramor3 (https://www.twitch.tv/Ysgramor3) for the cool text lines
+and the awesome suggestions!
+
+Thanks to GFPSolutions (https://www.twitch.tv/GFPSolutions) for the game
+mechanics/code suggestions!
+
+Thanks to my Twitch friends for joining my streams and helping me to test the
+game (https://www.twitch.tv/arighi_violin)! :)
