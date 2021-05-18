@@ -28,31 +28,36 @@ starting the game you need to configure the credentials to allow the bot to log
 into your chat. To do so create a file .env in this directory, the file should
 look like this:
 
+```
  TMI_TOKEN=oauth:<YOUR_OAUTH_TOKEN>
  CLIENT_ID=arighibot
  BOT_NICK=arighi_violin
  BOT_PREFIX=!
  CHANNEL=#arighi_violin
+```
 
-Where <YOUR_OAUTH_TOKEN> is a Twitch authentication token, see
+Where `<YOUR_OAUTH_TOKEN>` is a Twitch authentication token, see
 https://dev.twitch.tv/docs/authentication for more information on how to get
 one.
 
 Also make sure to replace all variables with your Twitch username and rename
-the bot (CLIENT_ID) as you prefer.
+the bot `CLIENT_ID` as you prefer.
 
 After the .env is created you can start the game using the run.sh script (in
 Linux - there should be an equivalent way to start the game from Windows / Mac
 as well):
 
+```
   $ ./run.sh
   Loading .env environment variables…
   arighi_violin is online!
+```
 
 Once the game is started users in chat can start to play (see the Rules below).
 
 ## Rules
 
+```
  - any PLAYER in chat can run:
    !ban <TARGET_PLAYER>
 
@@ -80,9 +85,11 @@ Once the game is started users in chat can start to play (see the Rules below).
 
  - PLAYER can get health back using IMG_REVIVE emotes in chat (max +1 HP for
    each message that contains the IMG_REVIVE emote)
+```
 
 ## TODO
 
+```
  - GFPSolutions: if you spam too many !ban => you enter in a vulnerable state
    and you can get a critical hit with a roll of 10+
 
@@ -97,6 +104,7 @@ Once the game is started users in chat can start to play (see the Rules below).
    damage backfire to prevent spamming ban even more
 
  - higher health pool for privileged users (mods, VIPs, etc.)
+```
 
 ## CREDITS
 
