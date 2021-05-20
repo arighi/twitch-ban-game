@@ -97,9 +97,9 @@ async def unban(ctx):
     if ctx.author.is_mod:
         players[target] = INITIAL_HP
         if player == target:
-            await ctx.send(f"@{target} {IMG_REVIVE} self-heals back to {players[target]} {IMG_HEALTH}")
+            await ctx.send(f"@{target} self-heals back to {players[target]} {IMG_HEALTH}")
         else:
-            await ctx.send(f"@{target} {IMG_REVIVE} has been fully healed to {players[target]} {IMG_HEALTH}")
+            await ctx.send(f"@{target} has been fully healed to {players[target]} {IMG_HEALTH}")
         return
     if players[player] == 0:
         await ctx.send(f"@{player} tried to cast healing from the realm of the banned {IMG_RIP}")
