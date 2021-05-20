@@ -40,12 +40,13 @@ async def event_ready():
 
 @bot.event
 async def event_message(msg):
-    if IMG_REVIVE in msg.content:
+    life = msg.content.count(IMG_REVIVE)
+    if life > 0:
         # Heal player if the message contains the IMG_REVIVE emote
         player = msg.author.name
         init_player(player)
         if msg.author.is_subscriber:
-            players[player] = min(players[player] + 1, INITIAL_HP)
+            players[player] = min(players[player] + life, INITIAL_HP)
     await bot.handle_commands(msg)
 
 def init_player(player):
