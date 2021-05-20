@@ -5,6 +5,7 @@ import itertools
 from requests import get
 from random import randint
 from twitchio.ext import commands
+from time import time
 
 # Set-up the bot
 bot = commands.Bot(
@@ -29,14 +30,20 @@ IMG_NONE = 'HypeLol'
 IMG_CRIT = 'HypeTarget'
 IMG_LEADER = 'HypeFighter'
 
-# Player's stats
+# Game mechanic parameters
 MAX_HP = 50
+BAN_COOLDOWN_SEC = 10
 
 # Player main object
 class Player:
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self._life = MAX_HP
         self.kills = 0
+        self.last_ban_ts = 0
+        self.weakness = 0
 
     def life(self):
         return self._life
@@ -80,6 +87,14 @@ def is_valid_user(name):
     users = json.loads(r.text)['chatters']
     return name in itertools.chain.from_iterable([users[i] for i in users])
 
+def check_weakness(player, do_ban=False):
+    delta_t = time() - players[player].last_ban_ts
+    if delta_t > BAN_COOLDOWN_SEC:
+        players[player].weakness = max(0, players[player].weakness - int(delta_t / BAN_COOLDOWN_SEC))
+    elif do_ban:
+        players[player].weakness += 1
+    return players[player].weakness
+
 @bot.command(name='score')
 async def score(ctx):
     res = sorted(players, key=lambda x: players[x].kills, reverse=True)
@@ -108,7 +123,8 @@ async def life(ctx):
     if hp == 0:
         await ctx.send(f"@{target} is banned {IMG_RIP}")
     else:
-        await ctx.send(f"@{target} has {hp} {IMG_HEALTH} left")
+        weakness = check_weakness(target)
+        await ctx.send(f"@{target} has {hp} {IMG_HEALTH} left, weakness is {weakness}")
 
 @bot.command(name='unban')
 async def unban(ctx):
@@ -123,7 +139,7 @@ async def unban(ctx):
     init_player(target)
 
     if ctx.author.is_mod:
-        players[target].heal(MAX_HP)
+        players[target].reset()
         if player == target:
             await ctx.send(f"@{target} self-heals back to {MAX_HP} {IMG_HEALTH}")
         else:
@@ -169,14 +185,16 @@ async def ban(ctx):
         await ctx.send(f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}")
 
     # Get some damage back
-    rand_perc = randint(10, 25)
-    dmg_back = 1 + int(damage * rand_perc / 100)
+    check_weakness(player, do_ban=True)
+
+    dmg_back = 2**players[player].weakness + randint(0, 4)
     players[player].damage(dmg_back)
     await ctx.send(f"@{player} uses {dmg_back} life to cast the ban spell {IMG_SPELL}")
     player_hp = players[player].life()
     if player_hp == 0:
         await ctx.send(f"@{player} died casting ban on @{target} {IMG_RIP}")
         return
+    players[player].last_ban_ts = time()
 
     # Apply damage to target
     if damage > 0:
@@ -184,7 +202,8 @@ async def ban(ctx):
         await ctx.send(f"@{player} deals {damage} BAN damage to @{target} {IMG_HIT}")
         target_hp = players[target].life()
         if target_hp == 0:
-            players[player].kills += 1
+            if player != target:
+                players[player].kills += 1
             await ctx.send(f"@{target} has been banned by @{player} {IMG_RIP}")
         else:
             await ctx.send(f"@{player} {player_hp} / @{target} {target_hp} {IMG_HEALTH}")

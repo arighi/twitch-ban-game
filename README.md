@@ -72,8 +72,6 @@ Once the game is started users in chat can start to play (see the Rules below).
 
    - a roll of 20 is a critical hit and it does x2 damage (=40 damage)
 
-   - <PLAYER> gets (1 + 10-25%) of the damage back (to prevent spamming !ban)
-
  - each <PLAYER> starts with an initial health pool of 50 HP
 
    - when <PLAYER> runs the !ban command we initialize the health pool for
@@ -92,6 +90,13 @@ Once the game is started users in chat can start to play (see the Rules below).
  - <PLAYER> can get health back using <IMG_REVIVE> emotes in the chat (max +1
    HP for each message that contains the <IMG_REVIVE> emote)
 
+ - Weakness:
+     Every time <PLAYER> casts !ban, they take 2^<WEAKNESS> + random(0, 4) damage:
+     - <WEAKNESS> is the current count of bans the user executed
+     - <WEAKNESS> is initialized to 0
+     - <WEAKNESS> is incremented every time a user types !ban (unless he is "banned")
+     - <WEAKNESS> is decremented by one every 10 sec
+
  - The command !score can be used to show the leaderboard of bans among the
    players
 ```
@@ -101,13 +106,6 @@ Once the game is started users in chat can start to play (see the Rules below).
 ```
  - GFPSolutions: if you spam too many !ban => you enter in a vulnerable state
    and you can get a critical hit with a roll of 10+
-
- - Ysgramor3:
-     Every time a user casts !ban, they take 2^n + random(0,4) damage.
-     n is the current count of bans the user executed.
-     n is initialized to 0
-     n is incremented every time a user types !ban (unless he is "banned")
-     n is decremented by one every 15 minutes.
 
  - implement an additional cooldown for the !ban command in addition to the
    damage backfire to prevent spamming ban even more
