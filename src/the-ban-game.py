@@ -27,6 +27,7 @@ IMG_EVIL = 'HypeRogue'
 IMG_FAIL = 'HypeWho'
 IMG_NONE = 'HypeLol'
 IMG_CRIT = 'HypeTarget'
+IMG_LEADER = 'HypeFighter'
 
 # Player's stats
 MAX_HP = 50
@@ -35,6 +36,7 @@ MAX_HP = 50
 class Player:
     def __init__(self):
         self._life = MAX_HP
+        self.kills = 0
 
     def life(self):
         return self._life
@@ -77,6 +79,16 @@ def is_valid_user(name):
     r = get(f'http://tmi.twitch.tv/group/user/{STREAMER_NAME}/chatters')
     users = json.loads(r.text)['chatters']
     return name in itertools.chain.from_iterable([users[i] for i in users])
+
+@bot.command(name='score')
+async def score(ctx):
+    res = sorted(players, key=lambda x: players[x].kills, reverse=True)
+    first_place = IMG_LEADER
+    score = ''
+    for player in res:
+        score = score + f"{first_place} @{player}: {players[player].kills} bans"
+        first_place = ' |'
+    await ctx.send(score)
 
 @bot.command(name='life')
 async def life(ctx):
@@ -172,6 +184,7 @@ async def ban(ctx):
         await ctx.send(f"@{player} deals {damage} BAN damage to @{target} {IMG_HIT}")
         target_hp = players[target].life()
         if target_hp == 0:
+            players[player].kills += 1
             await ctx.send(f"@{target} has been banned by @{player} {IMG_RIP}")
         else:
             await ctx.send(f"@{player} {player_hp} / @{target} {target_hp} {IMG_HEALTH}")

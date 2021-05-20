@@ -79,8 +79,9 @@ Once the game is started users in chat can start to play (see the Rules below).
    - when <PLAYER> runs the !ban command we initialize the health pool for
      <PLAYER> and <TARGET_PLAYER>
 
- - <PLAYER> can run a command !life to show in chat the amount of HP left !life
-   <TARGET_PLAYER> can be used to show the amount of HP left of <TARGET_PLAYER>
+ - <PLAYER> can run a command !life to show in chat the amount of HP left,
+   !life <TARGET_PLAYER> can be used to show the amount of HP left of
+   <TARGET_PLAYER>
 
  - when <PLAYER> reaches 0 HP, <PLAYER> is banned and cannot run the !ban
    command until <PLAYER> is resurrected (see !unban)
@@ -90,6 +91,9 @@ Once the game is started users in chat can start to play (see the Rules below).
 
  - <PLAYER> can get health back using <IMG_REVIVE> emotes in the chat (max +1
    HP for each message that contains the <IMG_REVIVE> emote)
+
+ - The command !score can be used to show the leaderboard of bans among the
+   players
 ```
 
 ## TODO
