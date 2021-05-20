@@ -29,8 +29,23 @@ IMG_NONE = 'HypeLol'
 IMG_CRIT = 'HypeTarget'
 
 # Player's stats
-INITIAL_HP = 50
+MAX_HP = 50
 
+# Player main object
+class Player:
+    def __init__(self):
+        self._life = MAX_HP
+
+    def life(self):
+        return self._life
+
+    def heal(self, life):
+        self._life = min(self._life + life, MAX_HP)
+
+    def damage(self, life):
+        self._life = max(self._life - life, 0)
+
+# Store all players statistics here
 players = {
 }
 
@@ -46,12 +61,12 @@ async def event_message(msg):
         player = msg.author.name
         init_player(player)
         if msg.author.is_subscriber:
-            players[player] = min(players[player] + life, INITIAL_HP)
+            players[player].heal(life)
     await bot.handle_commands(msg)
 
 def init_player(player):
     if player not in players:
-        players[player] = INITIAL_HP
+        players[player] = Player()
 
 def parse_args(ctx, command):
     return ctx.message.content.lower().removeprefix(command).strip().strip('@').split(' ')[0]
@@ -77,11 +92,11 @@ async def life(ctx):
         init_player(target)
     else:
         target = player
-
-    if players[target] == 0:
+    hp = players[target].life()
+    if hp == 0:
         await ctx.send(f"@{target} is banned {IMG_RIP}")
     else:
-        await ctx.send(f"@{target} has {players[target]} {IMG_HEALTH} left")
+        await ctx.send(f"@{target} has {hp} {IMG_HEALTH} left")
 
 @bot.command(name='unban')
 async def unban(ctx):
@@ -96,20 +111,20 @@ async def unban(ctx):
     init_player(target)
 
     if ctx.author.is_mod:
-        players[target] = INITIAL_HP
+        players[target].heal(MAX_HP)
         if player == target:
-            await ctx.send(f"@{target} self-heals back to {players[target]} {IMG_HEALTH}")
+            await ctx.send(f"@{target} self-heals back to {MAX_HP} {IMG_HEALTH}")
         else:
-            await ctx.send(f"@{target} has been fully healed to {players[target]} {IMG_HEALTH}")
+            await ctx.send(f"@{target} has been fully healed to {MAX_HP} {IMG_HEALTH}")
         return
-    if players[player] == 0:
+
+    if players[target].life():
         await ctx.send(f"@{player} tried to cast healing from the realm of the banned {IMG_RIP}")
         return
 
     await ctx.send(f"@{player} spectacularly fails at casting an ancient healing spell that they haven't practiced enough {IMG_FAIL}")
-
-    players[player] = max(players[player] - 1, 0)
-    if players[player] == 0:
+    players[player].damage(1)
+    if players[player].life() == 0:
         await ctx.send(f"@{player} died trying to cast healing at {target} {IMG_RIP}")
 
 @bot.command(name='ban')
@@ -125,11 +140,11 @@ async def ban(ctx):
     init_player(player)
 
     # Check if player is dead
-    if players[player] == 0:
+    if players[player].life() == 0:
         await ctx.send(f"@{player} shakes his fist from the realm of the banned {IMG_RIP}")
         return
     # Check if target is dead
-    if players[target] == 0:
+    if players[target].life() == 0:
         await ctx.send(f"@{player} is beating the dead body of a banned @{target} {IMG_EVIL}")
         return
 
@@ -144,19 +159,22 @@ async def ban(ctx):
     # Get some damage back
     rand_perc = randint(10, 25)
     dmg_back = 1 + int(damage * rand_perc / 100)
-    players[player] = max(players[player] - dmg_back, 0)
+    players[player].damage(dmg_back)
     await ctx.send(f"@{player} uses {dmg_back} life to cast the ban spell {IMG_SPELL}")
-    if players[player] == 0:
+    player_hp = players[player].life()
+    if player_hp == 0:
         await ctx.send(f"@{player} died casting ban on @{target} {IMG_RIP}")
         return
 
     # Apply damage to target
     if damage > 0:
-        players[target] = max(players[target] - damage, 0)
+        players[target].damage(damage)
         await ctx.send(f"@{player} deals {damage} BAN damage to @{target} {IMG_HIT}")
-        await ctx.send(f"@{player} {players[player]} / @{target} {players[target]} {IMG_HEALTH}")
-        if players[target] == 0:
+        target_hp = players[target].life()
+        if target_hp == 0:
             await ctx.send(f"@{target} has been banned by @{player} {IMG_RIP}")
+        else:
+            await ctx.send(f"@{player} {player_hp} / @{target} {target_hp} {IMG_HEALTH}")
     else:
         await ctx.send(f"@{player} raises his hands to cast ban on @{target}. Everyone is holding their breath to see how this battle turns out... but @{target} ducks just in time for the spell to miss them {IMG_MISS}")
 
