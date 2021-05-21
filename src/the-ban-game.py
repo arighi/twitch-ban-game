@@ -74,6 +74,22 @@ class Player:
         return self._saturation
 
 
+# Class used to compact more game messages in a single chat message
+class ChatMessage(object):
+    def __init__(self):
+        self._message = ''
+
+    def __iadd__(self, text):
+        if self._message == '':
+            self._message += text
+        else:
+            self._message += ' | ' + text
+        return self
+
+    def __str__(self):
+        return self._message
+
+
 # Store all players statistics here
 players = {
 }
@@ -94,7 +110,7 @@ async def event_message(msg):
     # add the user as active/update the timestamp
     active_chatters[msg.author.name] = int(time())
     saturation = msg.content.count(IMG_REVIVE)
-    if saturation > 0:  # msg.author.is_subscriber and TODO re-add is_subscriber check
+    if msg.author.is_subscriber and saturation > 0:
         # Add one saturation for every IMG_REVIVE emote in the message
         # Don't punish users too much for using IMG_REVIVE => 5 max
         player = msg.author.name
@@ -139,17 +155,15 @@ def check_exhaustion(player, do_ban=False):
 
 @bot.command(name='score')
 async def score(ctx):
-    res = [player for player in players if players[player].kills > 0]
-    if not res:
-        await ctx.send("Nobody has banned anybody (yet)")
-        return
-    res = sorted(res, key=lambda x: players[x].kills, reverse=True)
-    first_place = IMG_LEADER
-    score = ''
+    res = sorted(players, key=lambda x: players[x].kills, reverse=True)
+    score = ChatMessage()
     for player in res:
-        score = score + f"{first_place} @{player}: {players[player].kills} bans"
-        first_place = ' |'
-    await ctx.send(score)
+        kills = players[player].kills
+        if kills > 0:
+            score += f"@{player}: {kills} bans"
+    if str(score) == '':
+        score = 'leaderboard is empty'
+    await ctx.send(IMG_LEADER + ' ' + str(score))
 
 
 @bot.command(name='life')
@@ -193,7 +207,7 @@ async def unban(ctx):
             await ctx.send(f"@{target} has been fully healed to {MAX_HP} {IMG_HEALTH}")
         return
 
-    if players[target].life():
+    if players[player].life() == 0:
         await ctx.send(f"@{player} tried to cast healing from the realm of the banned {IMG_RIP}")
         return
 
@@ -225,13 +239,15 @@ async def ban(ctx):
         await ctx.send(f"@{player} is beating the dead body of a banned @{target} {IMG_EVIL}")
         return
 
+    m = ChatMessage()
+
     # Generate the damage (D20 roll)
     damage = randint(1, 20)
     if damage == 1:
         damage = 0
     elif damage == 20:
         damage = 40
-        await ctx.send(f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}")
+        m += f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}"
     else:
         # saturation weakens your ability to attack and evade
         # nat 20 always hits, nat 1 always misses => saturation only takes affect on 2-19
@@ -243,27 +259,29 @@ async def ban(ctx):
 
     dmg_back = 2 ** players[player].exhaustion + randint(0, 4)
     players[player].damage(dmg_back)
-    await ctx.send(f"@{player} uses {dmg_back} life to cast the ban spell {IMG_SPELL}")
+    m += f"@{player} uses {dmg_back} life to cast the ban spell {IMG_SPELL}"
     player_hp = players[player].life()
     if player_hp == 0:
-        await ctx.send(f"@{player} died casting ban on @{target} {IMG_RIP}")
-        return
-    players[player].last_ban_ts = time()
-
-    # Apply damage to target
-    if damage > 0:
-        players[target].damage(damage)
-        await ctx.send(f"@{player} deals {damage} BAN damage to @{target} {IMG_HIT}")
-        target_hp = players[target].life()
-        if target_hp == 0:
-            if player != target:
-                players[player].kills += 1
-            await ctx.send(f"@{target} has been banned by @{player} {IMG_RIP}")
-        else:
-            await ctx.send(f"@{player} {player_hp} / @{target} {target_hp} {IMG_HEALTH}")
+        m += f"@{player} died casting ban on @{target} {IMG_RIP}"
     else:
-        await ctx.send(
-            f"@{player} raises his hands to cast ban on @{target}. Everyone is holding their breath to see how this battle turns out... but @{target} ducks just in time for the spell to miss them {IMG_MISS}")
+        players[player].last_ban_ts = time()
+
+        # Apply damage to target
+        if damage > 0:
+            players[target].damage(damage)
+            m += f"@{player} deals {damage} BAN damage to @{target} {IMG_HIT}"
+            target_hp = players[target].life()
+            if target_hp == 0:
+                if player != target:
+                    players[player].kills += 1
+                m += f"@{target} has been banned by @{player} {IMG_RIP}"
+            else:
+                m += f"@{player} {player_hp} / @{target} {target_hp} {IMG_HEALTH}"
+        else:
+            m += f"@{player} raises his hands to cast ban on @{target}. Everyone is holding their breath to see how this battle turns out... but @{target} ducks just in time for the spell to miss them {IMG_MISS}"
+
+    # Post the whole message to the chat
+    await ctx.send(m)
 
 
 if __name__ == "__main__":
