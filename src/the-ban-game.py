@@ -207,7 +207,7 @@ async def unban(ctx):
             await ctx.send(f"@{target} has been fully healed to {MAX_HP} {IMG_HEALTH}")
         return
 
-    if players[target].life():
+    if players[player].life() == 0:
         await ctx.send(f"@{player} tried to cast healing from the realm of the banned {IMG_RIP}")
         return
 
