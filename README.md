@@ -90,12 +90,12 @@ Once the game is started users in chat can start to play (see the Rules below).
  - <PLAYER> can get health back using <IMG_REVIVE> emotes in the chat (max +1
    HP for each message that contains the <IMG_REVIVE> emote)
 
- - Weakness:
-     Every time <PLAYER> casts !ban, they take 2^<WEAKNESS> + random(0, 4) damage:
-     - <WEAKNESS> is the current count of bans the user executed
-     - <WEAKNESS> is initialized to 0
-     - <WEAKNESS> is incremented every time a user types !ban (unless he is "banned")
-     - <WEAKNESS> is decremented by one every 10 sec
+ - Exhaustion:
+     Every time <PLAYER> casts !ban, they take 2^<EXHAUSTION> + random(0, 4) damage:
+     - <EXHAUSTION> is the current count of bans the user executed
+     - <EXHAUSTION> is initialized to 0
+     - <EXHAUSTION> is incremented every time a user types !ban (unless he is "banned")
+     - <EXHAUSTION> is decremented by one every 10 sec
 
  - The command !score can be used to show the leaderboard of bans among the
    players

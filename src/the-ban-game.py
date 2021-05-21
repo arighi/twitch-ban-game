@@ -46,7 +46,7 @@ class Player:
         self._life = MAX_HP
         self.kills = 0
         self.last_ban_ts = 0
-        self.weakness = 0
+        self.exhaustion = 0
         self._saturation = 0  # slowly recharges health, but adds slowness. Slowness is subtracted from the dice roll
         self.last_saturation = time()
 
@@ -144,13 +144,13 @@ async def is_valid_user(name):
     return result
 
 
-def check_weakness(player, do_ban=False):
+def check_exhaustion(player, do_ban=False):
     delta_t = time() - players[player].last_ban_ts
     if delta_t > BAN_COOLDOWN_SEC:
-        players[player].weakness = max(0, players[player].weakness - int(delta_t / BAN_COOLDOWN_SEC))
+        players[player].exhaustion = max(0, players[player].exhaustion - int(delta_t / BAN_COOLDOWN_SEC))
     elif do_ban:
-        players[player].weakness += 1
-    return players[player].weakness
+        players[player].exhaustion += 1
+    return players[player].exhaustion
 
 
 @bot.command(name='score')
@@ -183,8 +183,8 @@ async def life(ctx):
     if hp == 0:
         await ctx.send(f"@{target} is banned {IMG_RIP}")
     else:
-        weakness = check_weakness(target)
-        await ctx.send(f"@{target} has {hp} {IMG_HEALTH} left, weakness is {weakness}, saturation is {players[target].saturation()}")
+        exhaustion = check_exhaustion(target)
+        await ctx.send(f"@{target} has {hp} {IMG_HEALTH} left, exhaustion is {exhaustion}, saturation is {players[target].saturation()}")
 
 
 @bot.command(name='unban')
@@ -249,15 +249,16 @@ async def ban(ctx):
         damage = 40
         m += f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}"
 
-    # saturation weakens your ability to attack and evade, but
+    # saturation weakens your ability to attack and evade
+    # nat 20 always hits, nat 1 always misses => saturation only takes affect on 2-19
     damage_nat = damage
     damage = max(damage - players[player].saturation(), 1)  # reduce attack damage
     damage = min(damage + players[target].saturation(), 39)  # reduce ability to evade
 
     # Get some damage back
-    check_weakness(player, do_ban=True)
+    check_exhaustion(player, do_ban=True)
 
-    dmg_back = 2 ** players[player].weakness + randint(0, 4)
+    dmg_back = 2 ** players[player].exhaustion + randint(0, 4)
     players[player].damage(dmg_back)
     m += f"@{player} uses {dmg_back} life to cast the ban spell {IMG_SPELL}"
     player_hp = players[player].life()
