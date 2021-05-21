@@ -94,7 +94,7 @@ async def event_message(msg):
     # add the user as active/update the timestamp
     active_chatters[msg.author.name] = int(time())
     saturation = msg.content.count(IMG_REVIVE)
-    if saturation > 0:  # msg.author.is_subscriber and
+    if msg.author.is_subscriber and saturation > 0:
         # Add one saturation for every IMG_REVIVE emote in the message
         # Don't punish users too much for using IMG_REVIVE => 5 max
         player = msg.author.name
