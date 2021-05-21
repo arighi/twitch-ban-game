@@ -285,5 +285,13 @@ async def ban(ctx):
     await ctx.send(m)
 
 
+@bot.command(name='ban-game')
+async def help(ctx):
+    m = ChatMessage()
+    m += 'Twitch Ban Game is an open-source text-based online fighting game that can be played in the Twitch chat'
+    m += 'Check out https://github.com/arighi/twitch-ban-game for more information'
+    await ctx.send(m)
+
+
 if __name__ == "__main__":
     bot.run()
