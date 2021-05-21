@@ -139,7 +139,11 @@ def check_exhaustion(player, do_ban=False):
 
 @bot.command(name='score')
 async def score(ctx):
-    res = sorted(players, key=lambda x: players[x].kills, reverse=True)
+    res = [player for player in players if players[player].kills > 0]
+    if not res:
+        await ctx.send("Nobody has banned anybody (yet)")
+        return
+    res = sorted(res, key=lambda x: players[x].kills, reverse=True)
     first_place = IMG_LEADER
     score = ''
     for player in res:
@@ -229,8 +233,8 @@ async def ban(ctx):
         damage = 40
         await ctx.send(f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}")
     else:
+        # saturation weakens your ability to attack and evade
         # nat 20 always hits, nat 1 always misses => saturation only takes affect on 2-19
-        # saturation weakens your ability to attack and evade, but
         damage = max(damage - players[player].saturation(), 1)  # reduce attack damage
         damage = min(damage + players[target].saturation(), 39)  # reduce ability to evade
 
