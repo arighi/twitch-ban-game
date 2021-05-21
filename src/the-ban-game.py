@@ -248,11 +248,12 @@ async def ban(ctx):
     elif damage == 20:
         damage = 40
         m += f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}"
-    else:
-        # saturation weakens your ability to attack and evade
-        # nat 20 always hits, nat 1 always misses => saturation only takes affect on 2-19
-        damage = max(damage - players[player].saturation(), 1)  # reduce attack damage
-        damage = min(damage + players[target].saturation(), 39)  # reduce ability to evade
+
+    # saturation weakens your ability to attack and evade
+    # nat 20 always hits, nat 1 always misses => saturation only takes affect on 2-19
+    damage_nat = damage
+    damage = max(damage - players[player].saturation(), 1)  # reduce attack damage
+    damage = min(damage + players[target].saturation(), 39)  # reduce ability to evade
 
     # Get some damage back
     check_exhaustion(player, do_ban=True)
@@ -267,7 +268,7 @@ async def ban(ctx):
         players[player].last_ban_ts = time()
 
         # Apply damage to target
-        if damage > 0:
+        if (damage_nat > 0) and (damage > 0 or damage_nat == 20):  # nat 20 always hits, nat 1 always misses
             players[target].damage(damage)
             m += f"@{player} deals {damage} BAN damage to @{target} {IMG_HIT}"
             target_hp = players[target].life()
