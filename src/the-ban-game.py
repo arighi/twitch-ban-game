@@ -60,7 +60,7 @@ class Player:
         self._life = max(self._life - life, 0)
 
     def saturate(self, saturation):
-        self._saturation = min(self._saturation + saturation, 50)
+        self._saturation = min(self._saturation + saturation, 5)
         self.last_saturation = time()
 
     def restoreHealth(self):
@@ -115,7 +115,7 @@ async def event_message(msg):
         # Don't punish users too much for using IMG_REVIVE => 5 max
         player = msg.author.name
         init_player(player)
-        players[player].saturate(max(saturation, 5))
+        players[player].saturate(saturation)
     await bot.handle_commands(msg)
 
 
@@ -250,18 +250,12 @@ async def ban(ctx):
     m = ChatMessage()
 
     # Generate the damage (D20 roll)
-    damage = randint(1, 20)
-    if damage == 1:
+    damage_nat = randint(1, 20)
+    if damage_nat == 1:
         damage = 0
-    elif damage == 20:
+    elif damage_nat == 20:
         damage = 40
         m += f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}"
-
-    # saturation weakens your ability to attack and evade
-    # nat 20 always hits, nat 1 always misses => saturation only takes affect on 2-19
-    damage_nat = damage
-    damage = max(damage - players[player].saturation(), 1)  # reduce attack damage
-    damage = min(damage + players[target].saturation(), 39)  # reduce ability to evade
 
     # Get some damage back
     check_exhaustion(player, do_ban=True)
