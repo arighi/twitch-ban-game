@@ -119,6 +119,14 @@ async def event_message(msg):
     await bot.handle_commands(msg)
 
 
+@bot.event
+async def event_command_error(ctx, error):
+    # Suppress command not found exceptions
+    if isinstance(error, commands.errors.CommandNotFound):
+        return
+    raise error
+
+
 def init_player(player):
     if player not in players:
         players[player] = Player()
