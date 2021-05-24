@@ -87,8 +87,9 @@ Once the game is started users in chat can start to play (see the Rules below).
  - !unban <TARGET_PLAYER> heals <TARGET_PLAYER> to full health
    (this command can be executed only by broadcaster or mods)
 
- - <PLAYER> can get health back using <IMG_REVIVE> emotes in the chat (max +1
-   HP for each message that contains the <IMG_REVIVE> emote)
+ - <PLAYER> can get the "saturation" buff by posting <IMG_REVIVE> in chat;
+   saturation provides healing over time (+1 health every 2 seconds);
+   saturation cannot exceed 5 (max saturation)
 
  - Exhaustion:
      Every time <PLAYER> casts !ban, they take 2^<EXHAUSTION> + random(0, 4) damage:
