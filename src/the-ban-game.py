@@ -32,7 +32,7 @@ IMG_LEADER = 'HypeFighter'
 
 # Game mechanic parameters
 MAX_HP = 50
-BAN_COOLDOWN_SEC = 60
+BAN_COOLDOWN_SEC = 15
 SATURATION_COOLDOWN = 2
 
 
