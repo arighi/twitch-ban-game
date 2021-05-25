@@ -33,7 +33,6 @@ IMG_LEADER = 'HypeFighter'
 # Game mechanic parameters
 MAX_HP = 50
 BAN_COOLDOWN_SEC = 60
-ACTIVE_CHATTER_TIMEOUT = 300
 SATURATION_COOLDOWN = 2
 
 
@@ -94,12 +93,6 @@ class ChatMessage(object):
 players = {
 }
 
-# {user: last_msg_timestamp}
-# users added on message received
-# remove users in is_valid_user() method before check
-active_chatters = {}
-
-
 @bot.event
 async def event_ready():
     print(f"{os.environ['BOT_NICK']} is online!")
@@ -107,8 +100,6 @@ async def event_ready():
 
 @bot.event
 async def event_message(msg):
-    # add the user as active/update the timestamp
-    active_chatters[msg.author.name] = int(time())
     saturation = msg.content.count(IMG_REVIVE)
     if msg.author.is_subscriber and saturation > 0:
         # Add one saturation for every IMG_REVIVE emote in the message
@@ -137,19 +128,14 @@ def parse_args(ctx, command):
 
 
 async def is_valid_user(name):
-    # remove users from active chatters list if they were inactive for too long
-    for chatter in active_chatters:
-        delta_t = int(time() - active_chatters[chatter])
-        if delta_t > ACTIVE_CHATTER_TIMEOUT:
-            del active_chatters[chatter]
     if name == '':
         return False
     users = list(await bot.get_chatters(STREAMER_NAME))[1]
-    result = (name in users) or (name in list(active_chatters.keys()))
-    if result:
+    res = name in users
+    if res:
         init_player(name)
         players[name].restoreHealth()
-    return result
+    return res
 
 
 def check_exhaustion(player, do_ban=False):
