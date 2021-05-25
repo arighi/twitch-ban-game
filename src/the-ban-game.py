@@ -242,6 +242,8 @@ async def ban(ctx):
     elif damage_nat == 20:
         damage = 40
         m += f"{player} {IMG_CRIT} CRITICAL HIT {IMG_CRIT}"
+    else:
+        damage = damage_nat
 
     # Get some damage back
     check_exhaustion(player, do_ban=True)
